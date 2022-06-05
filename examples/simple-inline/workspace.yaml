@@ -1,0 +1,25 @@
+apiVersion: tf.crossplane.io/v1alpha1
+kind: Workspace
+metadata:
+  name: simple-inline
+  annotations:
+    crossplane.io/external-name: simple-inline
+spec:
+  forProvider:
+    source: Inline
+    module: |
+      resource "random_id" "example" {
+        byte_length = 4
+      }
+      resource "null_resource" {
+        provisioner "local-exec" {
+          command = "echo junk"
+        }
+        triggers = {
+          always = timestamp()
+        }
+      }
+          
+  writeConnectionSecretToRef:
+    namespace: default
+    name: terraform-workspace-simple-inline
